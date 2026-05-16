@@ -182,6 +182,16 @@ flood-detection/
 
 ## Key Results & Insights
 
+### Results
+- **Maximum Validation IOU = 0.747375
+- **Maximum Validation F1 = 0.790
+
+- **Test IOU = 0.7429
+- **Test F1 = 0.7881
+
+- **IOU on Bolivia set = 0.7305
+- **F1 on Bolivia set = 0.7732
+
 ### Class Imbalance
 The training set exhibits significant imbalance:
 - **Background**: ~97% of valid pixels
