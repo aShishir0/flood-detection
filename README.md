@@ -2,7 +2,7 @@
 Data is sourced from Kaggle datasets:
 - Sen1Floods11 Essentials: https://www.kaggle.com/datasets/smabrarrajin/sen1floods11-essentials
 - JRC Water Hand: https://www.kaggle.com/datasets/shishiradh/jrcwaterhand
-- Checkpoint: https://www.kaggle.com/datasets/shishiradh/checkpoint0-6779
+- Checkpoint: https://www.kaggle.com/datasets/shishiradh/aquilla-checkpoint
 
 - KaggleNotebook : https://www.kaggle.com/code/shishiradh/flood-detection-with-unetpp
 
@@ -29,8 +29,7 @@ This project automates flood water identification by separating it from permanen
 - **Robust Architecture**: UNet++ with EfficientNet-B4 backbone
 - **Advanced Loss Function**: Focal Loss + Dice Loss for class imbalance handling
 - **Complete Pipeline**: Data loading → augmentation → training → validation → testing
-- **Class Imbalance Analysis**: Detailed statistics on training set composition
-- **Rich Visualization**: Themed plots for SAR, ground truth, and predictions
+- **Rich Visualization**: Themed plots for SAR, Sen1Floods11 label, JRC permanent water label,      ground truth, and prediction
 
 ## Dataset
 
@@ -57,7 +56,7 @@ Class -1 (Ignore):         LabelHand==-1
 ### UNet++
 - **Encoder**: EfficientNet-B4 (ImageNet pre-trained)
 - **Decoder**: Dense skip connections with recursive refinement
-- **Input Channels**: 2 (VV, VH SAR polarizations)
+- **Input Channels**: 3 (VV, VH, JRC)
 - **Output Classes**: 3 (Background, Permanent, Flood)
 - **Activation**: Softmax for multi-class segmentation
 
@@ -132,7 +131,7 @@ train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, ...)
 net = smp.UnetPlusPlus(
     encoder_name="efficientnet-b4",
     encoder_weights="imagenet",
-    in_channels=2,
+    in_channels=3,
     classes=3
 )
 
@@ -140,7 +139,7 @@ net = smp.UnetPlusPlus(
 train_validation_loop(
     net, optimizer, scheduler,
     train_loader, valid_loader,
-    num_epochs=100,
+    num_epochs=1000,
     device="cuda"
 )
 ```
@@ -162,17 +161,14 @@ print(f"Avg IoU: {avg_iou:.4f} | Avg F1: {avg_f1:.4f}")
 ### Sample Predictions (4-Panel Layout)
 Each test sample displays:
 - **A: SAR** - Gray-scale VV polarization for reference
-- **B: FloodLabel** - Ground truth flood water mask
+- **B: Hand Label** - Ground truth water mask provided by sen1flood11 dataset
 - **C: JRC** - Ground truth permanent water reference
-- **D: Prediction** - Model prediction (Blue=Permanent, Red=Flood)
+- **D: Ground Truth** - Target label created by fusing Hand label(total water) and JRC(perm water)
+- **E: Prediction** - Model prediction (Blue=Permanent, Red=Flood)
 
 ### Confusion Matrix
 Per-class breakdown with percentages and pixel counts, styled with dark theme for clarity.
 
-### Class Imbalance Analysis
-- Bar chart (log scale) showing class distribution
-- Donut chart displaying class share
-- Suggested class weights for weighted loss functions
 
 ## Project Structure
 
